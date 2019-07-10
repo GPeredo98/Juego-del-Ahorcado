@@ -38,12 +38,16 @@ public class Consola {
             //Obtenemos la letra que ingresa el jugador
             System.out.println("Ingrese una letra:");
             entrada = lectura.next();
+            entrada = entrada.toLowerCase();
             //Verificamos que la entrada sea una letra
             verificarLetraRepetida(confirmarEntrada(verificarEntrada(entrada)));
+            //quitarVidas(confirmarEntrada(verificarEntrada(entrada)));
 
             System.out.println(destaparPalabra());
             System.out.println("\n");
         }
+        System.out.println("Vidas: "+vidas);
+        System.out.println("FIN DEL JUEGO");
     }
 
     public static void cargarPalabras() {
@@ -54,6 +58,26 @@ public class Consola {
         lista_de_palabras.add("destornillador");
         lista_de_palabras.add("alcantarillado");
         lista_de_palabras.add("farmaceutico");
+    }
+
+    private static void quitarVidas(char letra) {
+        
+        boolean coincide = false;
+        char[] letras_de_palabra = palabra_secreta.toCharArray();
+        
+        //Buscamos si la letra coincide con alguna de la palabra oculta
+        for (int i = 0; i < letras_de_palabra.length; i++) {
+            if(letra == letras_de_palabra[i]){
+                coincide = true;
+            }
+        }
+        //Preguntamos si coincidio con alguna letra de la palabra oculta
+        //Si es asi SONRISA, caso contrario quitamos una vida
+        if(coincide){
+            System.out.println("¡SONRISA!");
+        } else {
+            vidas+= -1;
+        }
     }
 
     private static boolean verificarEntrada(String entrada) {
@@ -72,6 +96,8 @@ public class Consola {
             System.out.println("\033[31m" + "No se aceptan números" + "\u001B[0m");
         }
         return valido;
+        
+        
     }
 
     public static char confirmarEntrada(boolean valida) {
@@ -81,29 +107,36 @@ public class Consola {
         } else {
             System.out.println("Ingrese una letra:");
             entrada = lectura.next();
+            entrada = entrada.toLowerCase();
             return confirmarEntrada(verificarEntrada(entrada));
         }
     }
 
     public static void verificarLetraRepetida(char letra) {
-        boolean repetido = false;
+        
+        boolean hay_igual = false;
+        
+        //Verificamos solo si el array tiene por lo menos un elemento
         if (letras_tomadas.size() > 0) {
+            
             //Recorremos el array de letras tomadas buscando si ya hay alguna letra igual
             for (int i = 0; i < letras_tomadas.size(); i++) {
-                
+
                 if (String.valueOf(letra).equals(letras_tomadas.get(i).toString())) {
-                    repetido = true;
+                    hay_igual = true;
                 }
             }
             //Preguntamos si es que encontro una letra igual
-                //Si esa asi, se lo indicamos al jugador, caso contrario agregamos la letra
-                if(repetido){
-                    System.out.println("\033[31m" + "Ya ingresó esa letra" + "\u001B[0m");
-                } else {
-                    letras_tomadas.add(letra);
-                }
+            //Si esa asi, se lo indicamos al jugador, caso contrario agregamos la letra
+            if (hay_igual) {
+                System.out.println("\033[31m" + "Ya ingresó esa letra" + "\u001B[0m");
+            } else {
+                letras_tomadas.add(letra);
+                quitarVidas(letra);
+            }
         } else {
             letras_tomadas.add(letra);
+            quitarVidas(letra);
         }
     }
 
