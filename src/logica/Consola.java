@@ -1,17 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logica;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
-/**
- *
- * @author TOSHIBA
- */
 public class Consola {
 
     static Scanner lectura = new Scanner(System.in);
@@ -19,14 +10,17 @@ public class Consola {
     static ArrayList letras_tomadas = new ArrayList<>();
     static String entrada;
     static String palabra_secreta;
+    static String palabra_mostrada;
     static int vidas;
 
     public static void main(String[] args) {
 
-        cargarPalabras();
+        cargarPalabrasSecretas();
         palabra_secreta = seleccionarPalabra();
         vidas = 6;
-
+        
+        //Aqui se desarrolla el juego
+        game:
         while (vidas > 0) {
             System.out.println("Vidas: " + vidas);
             System.out.print("Letras: ");
@@ -45,12 +39,16 @@ public class Consola {
 
             System.out.println(destaparPalabra());
             System.out.println("\n");
+            if(!verificarLetrasOcultas()) {
+                System.out.println("\u001B[32m"+"¡LO CONSEGUISTE!"+"\u001B[0m");
+                break;
+            }
         }
         System.out.println("Vidas: " + vidas);
         System.out.println("FIN DEL JUEGO");
     }
 
-    public static void cargarPalabras() {
+    public static void cargarPalabrasSecretas() {
         lista_de_palabras.add("medioambiente");
         lista_de_palabras.add("jacuzzi");
         lista_de_palabras.add("helicoptero");
@@ -125,6 +123,7 @@ public class Consola {
             //Si esa asi, se lo indicamos al jugador, caso contrario agregamos la letra
             if (hay_igual) {
                 System.out.println("\033[31m" + "Ya ingresó esa letra" + "\u001B[0m");
+                
             } else {
                 letras_tomadas.add(letra);
                 quitarVidas(letra);
@@ -152,8 +151,10 @@ public class Consola {
     }
 
     public static String destaparPalabra() {
+        
+        boolean ocultas = true;
 
-        String palabra_mostrada = palabra_secreta;
+        palabra_mostrada = palabra_secreta;
         String letras = "";
 
         for (int i = 0; i < letras_tomadas.size(); i++) {
@@ -163,8 +164,23 @@ public class Consola {
 
         palabra_mostrada = palabra_secreta.replaceAll("", " ");
         palabra_mostrada = palabra_mostrada.replaceAll(expresion_regular, "_");
-
+        
+        //Verificamos si aun quedan letras ocultas
+        for (int i = 0; i < palabra_mostrada.length(); i++) {
+            if(palabra_mostrada.charAt(i) == '_'){
+                ocultas = false;
+            }
+        }
         return palabra_mostrada;
     }
-
+    
+    public static boolean verificarLetrasOcultas() {
+        for (int i = 0; i < palabra_mostrada.length(); i++) {
+            //Si nuestra palabra oculta aun tiene letras ocultas, devuelve true
+            if(palabra_mostrada.charAt(i)=='_'){
+                return true;
+            }
+        }
+        return false;
+    }
 }
