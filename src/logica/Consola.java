@@ -3,6 +3,11 @@ package logica;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ *
+ * @author Gabriel Peredo
+ */
+
 public class Consola {
 
     static Scanner lectura = new Scanner(System.in);
@@ -20,7 +25,6 @@ public class Consola {
         vidas = 6;
         
         //Aqui se desarrolla el juego
-        game:
         while (vidas > 0) {
             System.out.println("Vidas: " + vidas);
             System.out.print("Letras: ");
@@ -35,8 +39,7 @@ public class Consola {
             entrada = entrada.toLowerCase();
             //Verificamos que la entrada sea una letra
             verificarLetraRepetida(verificarEntrada(entrada));
-            //quitarVidas(confirmarEntrada(verificarEntrada(entrada)));
-
+            
             System.out.println(destaparPalabra());
             System.out.println("\n");
             if(!verificarLetrasOcultas()) {
@@ -152,25 +155,18 @@ public class Consola {
 
     public static String destaparPalabra() {
         
-        boolean ocultas = true;
-
         palabra_mostrada = palabra_secreta;
         String letras = "";
 
         for (int i = 0; i < letras_tomadas.size(); i++) {
             letras = letras + letras_tomadas.get(i);
         }
+        //Usando expresiones regulares tapamos las letras de la palabra secreta
+        //con guiones, menos en las letras ya tomadas
         String expresion_regular = "[a-z&&[^." + letras + "]]";
-
         palabra_mostrada = palabra_secreta.replaceAll("", " ");
         palabra_mostrada = palabra_mostrada.replaceAll(expresion_regular, "_");
         
-        //Verificamos si aun quedan letras ocultas
-        for (int i = 0; i < palabra_mostrada.length(); i++) {
-            if(palabra_mostrada.charAt(i) == '_'){
-                ocultas = false;
-            }
-        }
         return palabra_mostrada;
     }
     
